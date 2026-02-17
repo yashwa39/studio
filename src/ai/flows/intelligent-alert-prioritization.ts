@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview This file implements a Genkit flow for intelligent alert prioritization
@@ -71,7 +72,9 @@ export type PrioritizeAlertsOutput = z.infer<typeof PrioritizeAlertsOutputSchema
 export async function prioritizeAlerts(
   input: PrioritizeAlertsInput
 ): Promise<PrioritizeAlertsOutput> {
-  const hasKey = !!process.env.GOOGLE_GENAI_API_KEY && process.env.GOOGLE_GENAI_API_KEY !== 'YOUR_API_KEY';
+  // Check for various possible API key environment variables
+  const hasKey = !!(process.env.GOOGLE_GENAI_API_KEY || process.env.GEMINI_API_KEY) && 
+                 process.env.GOOGLE_GENAI_API_KEY !== 'YOUR_API_KEY';
 
   if (!hasKey) {
     return localPrioritizeAlerts(input);
@@ -113,10 +116,9 @@ function localPrioritizeAlerts(input: PrioritizeAlertsInput): PrioritizeAlertsOu
     };
   });
 
-  // Sort by priority (DANGER -> WARNING -> SAFE) and filter
-  const prioritized = alerts
-    .filter(a => a.threatLevel !== 'SAFE')
-    .sort((a, b) => a.ttcSeconds - b.ttcSeconds);
+  // Filter to show only WARNING or DANGER, unless all are SAFE
+  const filtered = alerts.filter(a => a.threatLevel !== 'SAFE');
+  const prioritized = filtered.sort((a, b) => a.ttcSeconds - b.ttcSeconds);
 
   if (prioritized.length === 0) {
     return {

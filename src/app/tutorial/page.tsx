@@ -135,17 +135,17 @@ export default function TutorialPage() {
                     <div className="flex justify-between items-center mb-10">
                       <div className="flex flex-col items-center gap-2">
                         <div className="w-12 h-12 rounded-full bg-emerald-500 flex items-center justify-center text-white font-black text-xs shadow-[0_0_15px_rgba(16,185,129,0.4)]">SAFE</div>
-                        <span className="text-[10px] font-bold">T &gt; 5s</span>
+                        <span className="text-[10px] font-bold">T {'>'} 5s</span>
                       </div>
                       <MoveRight className="text-muted-foreground/30" />
                       <div className="flex flex-col items-center gap-2">
                         <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center text-white font-black text-xs shadow-[0_0_15px_rgba(255,145,0,0.4)]">WARN</div>
-                        <span className="text-[10px] font-bold">2s &lt; T &lt; 5s</span>
+                        <span className="text-[10px] font-bold">2s {'<'} T {'<'} 5s</span>
                       </div>
                       <MoveRight className="text-muted-foreground/30" />
                       <div className="flex flex-col items-center gap-2">
                         <div className="w-12 h-12 rounded-full bg-destructive flex items-center justify-center text-white font-black text-xs shadow-[0_0_15px_rgba(239,68,68,0.4)]">DANGER</div>
-                        <span className="text-[10px] font-bold">T &lt; 2s</span>
+                        <span className="text-[10px] font-bold">T {'<'} 2s</span>
                       </div>
                     </div>
                     <p className="text-xs italic text-center">Hysteresis logic is applied to prevent "flip-flopping" of alerts at state boundaries.</p>
@@ -166,7 +166,7 @@ export default function TutorialPage() {
                </CardHeader>
                <CardContent className="space-y-4">
                  <p className="text-sm text-muted-foreground leading-relaxed">
-                   Traditional fleet safety often relies on expensive LiDAR units ($5k+). Our system proves that <span className="text-primary font-bold">Smart Math &gt; Expensive Hardware</span>.
+                   Traditional fleet safety often relies on expensive LiDAR units ($5k+). Our system proves that <span className="text-primary font-bold">Smart Math {'>'} Expensive Hardware</span>.
                  </p>
                  <ul className="space-y-3">
                    {[
@@ -191,7 +191,8 @@ export default function TutorialPage() {
                     <div className="w-16 h-16 rounded-xl overflow-hidden relative border border-border/50 shadow-lg">
                       <Image 
                         src="https://picsum.photos/seed/car1/100/100" 
-                        fill 
+                        width={100}
+                        height={100}
                         alt="Bus Scene" 
                         className="object-cover" 
                         data-ai-hint="bus scene"
@@ -206,7 +207,8 @@ export default function TutorialPage() {
                     <div className="w-16 h-16 rounded-xl overflow-hidden relative border border-border/50 shadow-lg">
                       <Image 
                         src="https://picsum.photos/seed/bus1/100/100" 
-                        fill 
+                        width={100}
+                        height={100}
                         alt="Bus Cockpit" 
                         className="object-cover" 
                         data-ai-hint="bus cockpit"
