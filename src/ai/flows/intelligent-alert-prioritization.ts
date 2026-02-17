@@ -2,7 +2,8 @@
 /**
  * @fileOverview This file implements a Genkit flow for intelligent alert prioritization
  * based on simulated blind spot data. It analyzes object distance, speed, and Time-to-Collision (TTC)
- * to categorize threats and provide concise explanations.
+ * to categorize threats. It includes a local fallback to allow the app to function without
+ * an external API key.
  *
  * - prioritizeAlerts - A function that handles the intelligent alert prioritization process.
  * - PrioritizeAlertsInput - The input type for the prioritizeAlerts function.
@@ -17,7 +18,7 @@ const PrioritizedAlertSchema = z.object({
     .enum(['SAFE', 'WARNING', 'DANGER'])
     .describe('The categorized threat level based on TTC and other factors.'),
   objectType: z
-    .enum(['car', 'bike', 'pedestrian'])
+    .enum(['car', 'bike', 'pedestrian', 'system'])
     .describe('The type of object detected.'),
   distanceMeters: z.number().describe('The distance to the detected object in meters.'),
   ttcSeconds: z
@@ -26,7 +27,7 @@ const PrioritizedAlertSchema = z.object({
   threatExplanation: z
     .string()
     .describe(
-      'A concise explanation of the immediate threat, suitable for a driver. Focus on the most critical threats.'
+      'A concise explanation of the immediate threat, suitable for a driver.'
     ),
 });
 
@@ -43,7 +44,7 @@ const PrioritizeAlertsInputSchema = z.object({
         speedMps: z
           .number()
           .describe(
-            'The relative speed of the detected object in meters per second (positive if approaching, negative if moving away).'
+            'The relative speed of the detected object in meters per second.'
           ),
         ttcSeconds: z
           .number()
@@ -58,15 +59,80 @@ const PrioritizeAlertsOutputSchema = z.object({
   prioritizedAlerts: z
     .array(PrioritizedAlertSchema)
     .describe(
-      'A list of prioritized alerts, ordered from most critical to least critical. Only include alerts with WARNING or DANGER threat levels, unless all objects are SAFE, in which case return a single SAFE alert for the entire system.'
+      'A list of prioritized alerts. If no objects are WARNING or DANGER, return a single SAFE alert.'
     ),
 });
 export type PrioritizeAlertsOutput = z.infer<typeof PrioritizeAlertsOutputSchema>;
 
+/**
+ * Main entry point for alert prioritization.
+ * Checks for API key availability and falls back to local logic if needed.
+ */
 export async function prioritizeAlerts(
   input: PrioritizeAlertsInput
 ): Promise<PrioritizeAlertsOutput> {
-  return intelligentAlertPrioritizationFlow(input);
+  const hasKey = !!process.env.GOOGLE_GENAI_API_KEY && process.env.GOOGLE_GENAI_API_KEY !== 'YOUR_API_KEY';
+
+  if (!hasKey) {
+    return localPrioritizeAlerts(input);
+  }
+
+  try {
+    return await intelligentAlertPrioritizationFlow(input);
+  } catch (error) {
+    console.warn("AI Prioritization failed, falling back to local heuristic logic.");
+    return localPrioritizeAlerts(input);
+  }
+}
+
+/**
+ * Deterministic fallback logic that mimics the AI's reasoning using simple thresholds.
+ */
+function localPrioritizeAlerts(input: PrioritizeAlertsInput): PrioritizeAlertsOutput {
+  const alerts = input.simulatedData.map(obj => {
+    let threatLevel: 'SAFE' | 'WARNING' | 'DANGER' = 'SAFE';
+    let explanation = '';
+
+    if (obj.ttcSeconds < 2) {
+      threatLevel = 'DANGER';
+      explanation = `${obj.objectType.charAt(0).toUpperCase() + obj.objectType.slice(1)} very close, immediate collision risk.`;
+    } else if (obj.ttcSeconds <= 5) {
+      threatLevel = 'WARNING';
+      explanation = `${obj.objectType.charAt(0).toUpperCase() + obj.objectType.slice(1)} approaching, potential conflict.`;
+    } else {
+      threatLevel = 'SAFE';
+      explanation = `${obj.objectType.charAt(0).toUpperCase() + obj.objectType.slice(1)} at safe distance.`;
+    }
+
+    return {
+      threatLevel,
+      objectType: obj.objectType,
+      distanceMeters: obj.distanceMeters,
+      ttcSeconds: obj.ttcSeconds,
+      threatExplanation: explanation,
+    };
+  });
+
+  // Sort by priority (DANGER -> WARNING -> SAFE) and filter
+  const prioritized = alerts
+    .filter(a => a.threatLevel !== 'SAFE')
+    .sort((a, b) => a.ttcSeconds - b.ttcSeconds);
+
+  if (prioritized.length === 0) {
+    return {
+      prioritizedAlerts: [
+        {
+          threatLevel: 'SAFE',
+          objectType: 'system',
+          distanceMeters: 0,
+          ttcSeconds: 0,
+          threatExplanation: 'All blind spots clear.',
+        },
+      ],
+    };
+  }
+
+  return { prioritizedAlerts: prioritized };
 }
 
 const alertPrioritizationPrompt = ai.definePrompt({
@@ -85,7 +151,6 @@ const intelligentAlertPrioritizationFlow = ai.defineFlow(
   async (input) => {
     const {output} = await alertPrioritizationPrompt(input);
 
-    // Ensure output has at least one SAFE alert if no warnings/dangers were detected
     if (output && output.prioritizedAlerts.length === 0) {
       return {
         prioritizedAlerts: [
