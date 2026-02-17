@@ -1,3 +1,34 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "bus-interior",
+      "description": "Bus driver cockpit",
+      "imageUrl": "https://images.unsplash.com/photo-1631450007927-17fc9e29a031?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxidXMlMjBpbnRlcmlvcnxlbnwwfHx8fDE3NzEyNTg2Nzl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "bus interior"
+    },
+    {
+      "id": "blind-spot-diagram",
+      "description": "Bus blind spot illustration",
+      "imageUrl": "https://picsum.photos/seed/blindspot/800/600",
+      "imageHint": "bus blindspot"
+    },
+    {
+      "id": "car-detection",
+      "description": "Car detected in blind spot",
+      "imageUrl": "https://images.unsplash.com/photo-1629538745524-5b748fddac9f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxjYXIlMjByb2FkfGVufDB8fHx8MTc3MTM1NDE0OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "car road"
+    },
+    {
+      "id": "bike-detection",
+      "description": "Bike detected in blind spot",
+      "imageUrl": "https://images.unsplash.com/photo-1614899289365-9c1e0e4286d2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxjeWNsaXN0JTIwc3RyZWV0fGVufDB8fHx8MTc3MTM1NDE0OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "cyclist street"
+    },
+    {
+      "id": "pedestrian-detection",
+      "description": "Pedestrian detected in blind spot",
+      "imageUrl": "https://images.unsplash.com/photo-1693912478383-83e8abe1752a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxwZWRlc3RyaWFuJTIwc2lkZXdhbGt8ZW58MHx8fHwxNzcxMzU0MTQ5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "pedestrian sidewalk"
+    }
+  ]
 }
