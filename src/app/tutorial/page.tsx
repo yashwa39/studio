@@ -4,6 +4,7 @@
 import { SidebarNav } from '@/components/dashboard/SidebarNav';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Badge } from '@/components/ui/badge';
 import { ShieldCheck, Cpu, Brackets, Calculator, MoveRight, Layers, Radar, Database, Zap } from 'lucide-react';
 import Image from 'next/image';
 
@@ -134,7 +135,7 @@ export default function TutorialPage() {
                     <div className="flex justify-between items-center mb-10">
                       <div className="flex flex-col items-center gap-2">
                         <div className="w-12 h-12 rounded-full bg-emerald-500 flex items-center justify-center text-white font-black text-xs shadow-[0_0_15px_rgba(16,185,129,0.4)]">SAFE</div>
-                        <span className="text-[10px] font-bold">T > 5s</span>
+                        <span className="text-[10px] font-bold">T &gt; 5s</span>
                       </div>
                       <MoveRight className="text-muted-foreground/30" />
                       <div className="flex flex-col items-center gap-2">
@@ -165,7 +166,7 @@ export default function TutorialPage() {
                </CardHeader>
                <CardContent className="space-y-4">
                  <p className="text-sm text-muted-foreground leading-relaxed">
-                   Traditional fleet safety often relies on expensive LiDAR units ($5k+). Our system proves that <span className="text-primary font-bold">Smart Math > Expensive Hardware</span>.
+                   Traditional fleet safety often relies on expensive LiDAR units ($5k+). Our system proves that <span className="text-primary font-bold">Smart Math &gt; Expensive Hardware</span>.
                  </p>
                  <ul className="space-y-3">
                    {[
